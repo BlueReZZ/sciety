@@ -8,6 +8,9 @@ import { ExpressionDoi } from '../../../types/expression-doi';
 import { HtmlFragment } from '../../../types/html-fragment';
 import { ListId } from '../../../types/list-id';
 import { SanitisedHtmlFragment } from '../../../types/sanitised-html-fragment';
+import {
+  SembleCollection, SembleConnection, SembleNote, SembleSave,
+} from '../../../types/semble-activity';
 import { CurationStatement } from '../../curation-statements';
 import { ArticleCardViewModel } from '../shared-components/article-card';
 import { GroupLinkWithLogoViewModel } from '../shared-components/group-link';
@@ -48,10 +51,34 @@ export type CassyniSeminarPublishedFeedItem = {
   reviewedPaperDoi: ExpressionDoi,
 };
 
+export type SembleSavedFeedItem = {
+  type: 'semble-saved',
+  publishedAt: Date,
+  save: SembleSave,
+};
+
+export type SembleNoteAddedFeedItem = {
+  type: 'semble-note-added',
+  publishedAt: Date,
+  note: SembleNote,
+};
+
+export type SembleConnectionMadeFeedItem = {
+  type: 'semble-connection-made',
+  publishedAt: Date,
+  connection: SembleConnection,
+};
+
+export type SembleFeedItem =
+  | SembleSavedFeedItem
+  | SembleNoteAddedFeedItem
+  | SembleConnectionMadeFeedItem;
+
 export type FeedItem =
   | EvaluationPublishedFeedItem
   | ExpressionPublishedFeedItem
-  | CassyniSeminarPublishedFeedItem;
+  | CassyniSeminarPublishedFeedItem
+  | SembleFeedItem;
 
 type ListSummary = {
   listName: string,
@@ -80,6 +107,7 @@ export type ViewModel = {
   feedItemsByDateDescending: ReadonlyArray<FeedItem>,
   userListManagement: O.Option<LoggedInUserListManagement>,
   listedIn: ReadonlyArray<{ listId: ListId, listName: string, listOwnerName: string, listHref: string }>,
+  listedInSembleCollections: ReadonlyArray<SembleCollection>,
   relatedArticles: O.Option<ReadonlyArray<ArticleCardViewModel>>,
   curationStatements: ReadonlyArray<CurationStatement>,
   reviewingGroups: ReadonlyArray<GroupLinkWithLogoViewModel>,

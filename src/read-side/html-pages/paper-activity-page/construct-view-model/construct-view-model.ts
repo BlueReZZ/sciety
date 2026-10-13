@@ -1,6 +1,7 @@
 import { sequenceS } from 'fp-ts/Apply';
 import * as O from 'fp-ts/Option';
 import * as RA from 'fp-ts/ReadonlyArray';
+import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/function';
 import { constructContainingList } from './construct-containing-list';
@@ -11,6 +12,7 @@ import { getFeedItemsByDateDescending } from './get-feed-items-by-date-descendin
 import { CanonicalExpressionDoi, toDoiUrl } from '../../../../types/expression-doi';
 import { ExpressionFrontMatter } from '../../../../types/expression-front-matter';
 import { toHtmlFragment } from '../../../../types/html-fragment';
+import { emptySembleActivity } from '../../../../types/semble-activity';
 import { UserId } from '../../../../types/user-id';
 import { constructFrontMatter } from '../../../construct-front-matter';
 import { constructCurationStatements } from '../../../curation-statements';
@@ -42,15 +44,21 @@ type Params = {
 export const constructViewModel: ConstructViewModel<Params, ViewModel> = (dependencies) => (params) => pipe(
   params.latestExpressionDoi,
   dependencies.fetchPublishingHistory,
-  TE.chain((publishingHistory) => pipe(
+  TE.chainW((publishingHistory) => pipe(
+    dependencies.fetchSembleActivity(publishingHistory),
+    // Semble is a bonus source of activity, its unavailability must never break the page
+    TE.getOrElse(() => T.of(emptySembleActivity)),
+    TE.rightTask,
+    TE.map((sembleActivity) => ({ publishingHistory, sembleActivity })),
+  )),
+  TE.chain(({ publishingHistory, sembleActivity }) => pipe(
     {
       frontMatter: pipe(
         publishingHistory,
         constructFrontMatter(dependencies),
       ),
       feedItemsByDateDescending: pipe(
-        publishingHistory,
-        getFeedItemsByDateDescending(dependencies),
+        getFeedItemsByDateDescending(dependencies)(publishingHistory, sembleActivity),
         TE.rightTask,
       ),
       relatedArticles: pipe(
@@ -62,6 +70,7 @@ export const constructViewModel: ConstructViewModel<Params, ViewModel> = (depend
         TE.rightTask,
       ),
       publishingHistory: TE.right(publishingHistory),
+      sembleActivity: TE.right(sembleActivity),
     },
     sequenceS(TE.ApplyPar),
   )),
@@ -78,6 +87,7 @@ export const constructViewModel: ConstructViewModel<Params, ViewModel> = (depend
       findAllListsContainingPaper(dependencies),
       RA.map(constructContainingList(dependencies)),
     ),
+    listedInSembleCollections: partial.sembleActivity.collections,
     relatedArticles: partial.relatedArticles,
     curationStatements: pipe(
       partial.curationStatements,

@@ -10,6 +10,7 @@ import * as DE from '../../src/types/data-error';
 import { toHtmlFragment } from '../../src/types/html-fragment';
 import * as PH from '../../src/types/publishing-history';
 import { sanitise } from '../../src/types/sanitised-html-fragment';
+import { emptySembleActivity } from '../../src/types/semble-activity';
 import {
   arbitraryDate,
   arbitrarySanitisedHtmlFragment,
@@ -38,6 +39,7 @@ export const createHappyPathExternalQueries = (): ExternalQueries => ({
   ]),
   fetchEvaluationDigest: () => TE.right(arbitrarySanitisedHtmlFragment()),
   fetchSearchCategories: () => TE.right([arbitraryString()]),
+  fetchSembleActivity: () => TE.right(emptySembleActivity),
   fetchStaticFile: () => TE.right('lorem ipsum'),
   fetchUserAvatarUrl: () => TE.right('/static/images/profile-dark.svg'),
   fetchPublishingHistory: (expressionDoi) => pipe(

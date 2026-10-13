@@ -9,6 +9,7 @@ import { fetchStaticFile } from './fetch-static-file';
 import { localFetchPaperExpressionFrontMatter } from './local-fetch-paper-expression-front-matter';
 import { searchForPaperExpressions } from './search-for-paper-expressions';
 import { ExternalNotifications, ExternalQueries } from '../../third-parties';
+import { emptySembleActivity } from '../../types/semble-activity';
 
 export const stubAdapters: ExternalQueries & ExternalNotifications = {
   fetchByCategory,
@@ -18,6 +19,7 @@ export const stubAdapters: ExternalQueries & ExternalNotifications = {
   fetchPublishingHistory,
   fetchRecommendedPapers,
   fetchSearchCategories,
+  fetchSembleActivity: () => TE.right(emptySembleActivity),
   fetchStaticFile,
   fetchUserAvatarUrl: () => TE.right('/static/images/profile-dark.svg'),
   searchForPaperExpressions,

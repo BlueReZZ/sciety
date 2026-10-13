@@ -7,8 +7,10 @@ import { pipe } from 'fp-ts/function';
 import { Dependencies } from './dependencies';
 import { toEvaluationPublishedFeedItem } from './to-evaluation-published-feed-item';
 import { toExpressionPublishedFeedItem } from './to-expression-published-feed-item';
+import { toSembleFeedItems } from './to-semble-feed-items';
 import * as EDOI from '../../../../types/expression-doi';
 import * as PH from '../../../../types/publishing-history';
+import { SembleActivity } from '../../../../types/semble-activity';
 import { constructEvaluationHistory } from '../../../construct-evaluation-history';
 import { CassyniSeminarPublishedFeedItem, FeedItem } from '../view-model';
 
@@ -62,13 +64,14 @@ const constructCassyniSeminarFeedItems = (
 };
 
 type GetFeedItemsByDateDescending = (dependencies: Dependencies)
-=> (history: PH.PublishingHistory)
+=> (history: PH.PublishingHistory, sembleActivity: SembleActivity)
 => T.Task<ReadonlyArray<FeedItem>>;
 
 export const getFeedItemsByDateDescending: GetFeedItemsByDateDescending = (
   dependencies,
 ) => (
   history,
+  sembleActivity,
 ) => pipe(
   ({
     evaluations: pipe(
@@ -83,6 +86,11 @@ export const getFeedItemsByDateDescending: GetFeedItemsByDateDescending = (
     ),
   }),
   sequenceS(T.ApplyPar),
-  T.map((items) => [...items.evaluations, ...items.expressions, ...constructCassyniSeminarFeedItems(history)]),
+  T.map((items) => [
+    ...items.evaluations,
+    ...items.expressions,
+    ...constructCassyniSeminarFeedItems(history),
+    ...toSembleFeedItems(sembleActivity),
+  ]),
   T.map(RA.sort(byDateDescending)),
 );

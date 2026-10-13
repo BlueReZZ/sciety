@@ -4,6 +4,7 @@ import { renderListedIn } from './render-listed-in';
 import { renderRelatedArticles } from './render-related-articles';
 import { renderRelatedArticlesLink } from './render-related-articles-link';
 import { renderReviewingGroups } from './render-reviewing-groups';
+import { renderSembleCollections } from './render-semble-collections';
 import { renderUserListManagement } from './render-user-list-management';
 import { HtmlFragment, toHtmlFragment } from '../../../../types/html-fragment';
 import { renderLangAttribute } from '../../shared-components/lang-attribute';
@@ -18,9 +19,10 @@ export const renderPage = (viewmodel: ViewModel): HtmlFragment => toHtmlFragment
         <a href="${viewmodel.expressionFullTextHref}" class="full-article-button">Read the full article</a>
         ${renderRelatedArticlesLink(viewmodel.relatedArticles)}
         <div class="list-management">
-          ${renderListedIn(viewmodel.listedIn)}
+          ${renderListedIn(viewmodel.listedIn, viewmodel.listedInSembleCollections)}
           ${renderUserListManagement(viewmodel)}
         </div>
+        ${renderSembleCollections(viewmodel.listedInSembleCollections)}
       </section>
       <section>
         <section role="doc-abstract" class="article-abstract">

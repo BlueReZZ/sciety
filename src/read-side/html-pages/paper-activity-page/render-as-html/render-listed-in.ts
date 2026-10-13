@@ -11,9 +11,20 @@ const renderList = (listContent: string) => `
   </ul>
 `;
 
-export const renderListedIn = (listedIn: ViewModel['listedIn']): HtmlFragment => pipe(
-  listedIn,
-  RA.map((item) => toHtmlFragment(`<a href="${item.listHref}">${htmlEscape(item.listName)}</a> (${htmlEscape(item.listOwnerName)})`)),
+export const renderListedIn = (
+  listedIn: ViewModel['listedIn'],
+  sembleCollections: ViewModel['listedInSembleCollections'],
+): HtmlFragment => pipe(
+  [
+    ...pipe(
+      listedIn,
+      RA.map((item) => toHtmlFragment(`<a href="${item.listHref}">${htmlEscape(item.listName)}</a> (${htmlEscape(item.listOwnerName)})`)),
+    ),
+    ...pipe(
+      sembleCollections,
+      RA.map((collection) => toHtmlFragment(`<a href="${htmlEscape(collection.href)}">${htmlEscape(collection.name)}</a> (${htmlEscape(collection.owner.name)}, collection on Semble)`)),
+    ),
+  ],
   RA.match(
     () => 'This article is not in any list yet, why not save it to one of your lists.',
     flow(

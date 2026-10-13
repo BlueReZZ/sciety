@@ -9,6 +9,7 @@ import { PublishingHistory } from '../types/publishing-history';
 import { QueryParameters } from '../types/query-parameters';
 import { SanitisedHtmlFragment } from '../types/sanitised-html-fragment';
 import { SearchResults } from '../types/search-results';
+import { SembleActivity } from '../types/semble-activity';
 import { UserId } from '../types/user-id';
 
 type PageOfExpressions = { expressionDois: ReadonlyArray<ExpressionDoi>, totalItems: number };
@@ -32,6 +33,10 @@ type FetchEvaluationDigest = (
 type FetchEvaluationHumanReadableOriginalUrl = (
   id: EvaluationLocator,
 ) => TE.TaskEither<DE.DataError, URL>;
+
+type FetchSembleActivity = (
+  history: PublishingHistory,
+) => TE.TaskEither<DE.DataError, SembleActivity>;
 
 type FetchStaticFile = (filename: string) => TE.TaskEither<DE.DataError, string>;
 
@@ -59,6 +64,7 @@ export type ExternalQueries = {
   fetchPublishingHistory: FetchPublishingHistory,
   fetchRecommendedPapers: FetchRecommendedPapers,
   fetchSearchCategories: FetchSearchCategories,
+  fetchSembleActivity: FetchSembleActivity,
   fetchStaticFile: FetchStaticFile,
   fetchUserAvatarUrl: FetchUserAvatarUrl,
   searchForPaperExpressions: SearchForPaperExpressions,

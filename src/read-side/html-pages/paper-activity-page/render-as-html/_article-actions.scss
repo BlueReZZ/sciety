@@ -85,3 +85,34 @@
 .article-actions__save_article {
   @include button.primary-link();
 }
+
+.semble-collections {
+  margin-top: local-settings.$component-vertical-spacing;
+  @include card.basics();
+}
+
+.semble-collections__collection {
+  margin-bottom: functions.px-to-rem(24px);
+}
+
+.semble-collections__collection-name {
+  margin-bottom: functions.px-to-rem(8px);
+  @include typography.heading-4();
+}
+
+.semble-collections__owner {
+  font-weight: normal;
+}
+
+.semble-collections__items {
+  margin-bottom: functions.px-to-rem(8px);
+  @include list.basics();
+
+  li {
+    margin-bottom: functions.px-to-rem(8px);
+  }
+}
+
+.discuss-on-atmosphere-button {
+  @include button.primary-link();
+}
